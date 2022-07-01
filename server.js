@@ -13,80 +13,37 @@ app.use(cors());
 // app.메서드(경로,함수(응답))
 // 경로 /products임
 app.get('/products',async (req,res)=>{
-    const result = {
-        products:[
-            {
-                id:1,
-                name:"거실조명",
-                price:10000,
-                imgsrc:"images/products/product1.jpg",
-                seller:"green",
-            },
-            {
-                id:2,
-                name:"아동조명",
-                price:20000,
-                imgsrc:"images/products/product2.jpg",
-                seller:"blue",
-            },
-            {
-                id:3,
-                name:"거실조명",
-                price:30000,
-                imgsrc:"images/products/product3.jpg",
-                seller:"red",
-            },
-            {
-                id:4,
-                name:"아동조명",
-                price:40000,
-                imgsrc:"images/products/product4.jpg",
-                seller:"yellow",
-            },
-            {
-                id:5,
-                name:"거실조명",
-                price:50000,
-                imgsrc:"images/products/product1.jpg",
-                seller:"black",
-            },
-            {
-                id:6,
-                name:"아동조명",
-                price:60000,
-                imgsrc:"images/products/product2.jpg",
-                seller:"purple",
-            },
-            {
-                id:7,
-                name:"거실조명",
-                price:70000,
-                imgsrc:"images/products/product3.jpg",
-                seller:"pink",
-            },
-            {
-                id:8,
-                name:"아동조명",
-                price:80000,
-                imgsrc:"images/products/product4.jpg",
-                seller:"gold",
-            },
-        ]
-    } 
-    res.send(result);
+    // 데이터베이스 조회하기
+    models.Product.findAll()
+    .then(result=>{
+        console.log("제품전체조회", result);
+        res.send({
+            product: result
+        })
+    })
+    .catch((e)=>{
+        console.error(e);
+        res.send('파일 조회에 문제가 있습니다.');
+    })
 })
 // method get요청이 오고 url은 /product/2로 요청이 온 경우
 app.get('/product/:id', async (req, res)=> {
     const params = req.params;
-    const { id } = params;
-    const product = {
-            id:id,
-            name:"서버에서 보내는 이름",
-            price:`서버80000`,
-            imgsrc:"images/products/product4.jpg",
-            seller:"서버seller",
-    }
-    res.send(product);
+    // const { id } = params;
+    // 하나만 조회할때는 findOne -> select문
+    models.Product.findOne({
+        // 조건절
+        where: {
+            id:params.id
+        }
+    })
+    .then(result=>{
+        res.send(result);
+    })
+    .catch((e)=>{
+        console.log(e);
+        res.send("상품조회에 문제가 생겼습니다.");
+    })
 });
 app.post('/green',async (req,res)=>{
     console.log(req);
